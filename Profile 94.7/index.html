@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neil Oliver – Couch to 94.7</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --card: #151b24;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --gold: #f59e0b;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --border: #1e293b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #0f172a;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 14px 20px;
+    }
+
+    .brand-title {
+      text-align: center;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .tab-nav {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      background: var(--card);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 8px 18px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: 0.2s;
+    }
+
+    .tab-btn:hover { color: white; border-color: var(--accent); }
+    .tab-btn.active {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 30px 20px;
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fade 0.3s ease; }
+
+    @keyframes fade {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* Profile Hero */
+    .profile-hero {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 30px;
+      height: 420px;
+      background: url('assets/background.jpg') center top / cover no-repeat;
+    }
+
+    .profile-hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(11,15,20,0.92) 10%, rgba(11,15,20,0.45) 50%, rgba(11,15,20,0.25) 100%);
+    }
+
+    .profile-content {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 30px;
+    }
+
+    .profile-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid var(--gold);
+      box-shadow: 0 0 25px rgba(245, 158, 11, 0.4);
+      margin-bottom: 16px;
+    }
+
+    .profile-name { font-size: 2rem; font-weight: 700; color: white; }
+    .profile-role { color: var(--gold); font-weight: 600; margin-bottom: 6px; }
+    .profile-email { color: #93c5fd; font-size: 0.95rem; }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .card h3 { color: var(--gold); margin-bottom: 12px; font-size: 1.2rem; }
+    .card p, .card li { color: var(--muted); margin-bottom: 10px; }
+    .card ul { padding-left: 20px; }
+
+    .action-btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 9px 18px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .action-btn:hover { background: var(--accent-hover); }
+    .pdf-btn { background: #10b981; }
+    .pdf-btn:hover { background: #059669; }
+
+    /* Documents */
+    .docs-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .docs-header img {
+      width: 70px;
+      height: 70px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 2px solid var(--border);
+    }
+
+    /* App Hub - Fixed Banner */
+    .app-banner {
+      width: 100%;
+      height: 240px;
+      object-fit: cover;
+      object-position: center;
+      border-radius: 10px;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    /* Video */
+    .media-wrapper {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    #videoPlayer {
+      width: 100%;
+      max-height: 400px;
+      border-radius: 8px;
+      background: #000;
+    }
+
+    .track-list, .video-list {
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .track-btn, .video-btn {
+      background: #1e293b;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 8px;
+      text-align: left;
+      cursor: pointer;
+    }
+    .track-btn:hover, .video-btn:hover,
+    .track-btn.active, .video-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    audio { width: 100%; margin-top: 12px; }
+
+    footer {
+      text-align: center;
+      padding: 18px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    /* ===== SPECIAL PRINTABLE PDF STYLES ===== */
+    .pdf-only {
+      display: none;
+    }
+
+    @media print {
+      .pdf-only { display: block; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="brand-title">Neil Oliver – Couch to 94.7</div>
+  <nav class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('profile', this)">Profile</button>
+    <button class="tab-btn" onclick="switchTab('documents', this)">Documents</button>
+    <button class="tab-btn" onclick="switchTab('app', this)">App Hub</button>
+    <button class="tab-btn" onclick="switchTab('music', this)">Music</button>
+    <button class="tab-btn" onclick="switchTab('video', this)">Video Promos</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- PROFILE -->
+  <section id="tab-profile" class="tab-content active">
+    <div class="section-title">
+      <h2>Creator Profile</h2>
+      <button class="action-btn pdf-btn" onclick="generateProfilePDF()">📄 Download PDF</button>
+    </div>
+
+    <!-- Visible on screen -->
+    <div class="profile-hero">
+      <div class="profile-content">
+        <img src="assets/Profile.jpg" alt="Neil Oliver" class="profile-avatar">
+        <div class="profile-name">Neil Oliver</div>
+        <div class="profile-role">Creator & Developer of Couch to 94.7</div>
+        <div class="profile-email">neil27oliver@gmail.com</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Why this exists</h3>
+      <p>I believe ordinary people can achieve extraordinary endurance goals when they are given clear structure, honest guidance, and steady encouragement.</p>
+      <p>Couch to 94.7 exists to take someone from the couch all the way to the finish line of the Momentum 94.7 — using progressive training, simple technology, and a supportive community.</p>
+    </div>
+
+    <div class="card">
+      <h3>How it works</h3>
+      <p>The system combines a 12-week progressive plan, Functional Threshold Power (FTP) based training, clear bike-fit guidance, and practical tools that work on a normal phone.</p>
+    </div>
+
+    <div class="card">
+      <h3>What you get</h3>
+      <ul>
+        <li>A complete Progressive Web App for indoor & outdoor training</li>
+        <li>Detailed cycling documents (Bike Fit, Phone Setup, User Manual)</li>
+        <li>Original music and promotional videos</li>
+        <li>Certificates as you progress through Foundation → Build → Race Prep</li>
+      </ul>
+    </div>
+
+    <!-- Hidden clean version used only for PDF -->
+    <div id="pdf-content" style="display:none; background:#151b24; color:#f1f5f9; padding:40px; font-family:sans-serif;">
+      <h1 style="color:#f59e0b; margin-bottom:5px;">Neil Oliver</h1>
+      <h2 style="color:#93c5fd; margin-bottom:5px;">Creator & Developer of Couch to 94.7</h2>
+      <p style="color:#94a3b8; margin-bottom:25px;">neil27oliver@gmail.com</p>
+
+      <h3 style="color:#f59e0b;">Why this exists</h3>
+      <p>I believe ordinary people can achieve extraordinary endurance goals when they are given clear structure, honest guidance, and steady encouragement.</p>
+      <p>Couch to 94.7 exists to take someone from the couch all the way to the finish line of the Momentum 94.7 — using progressive training, simple technology, and a supportive community.</p>
+
+      <h3 style="color:#f59e0b; margin-top:25px;">How it works</h3>
+      <p>The system combines a 12-week progressive plan, Functional Threshold Power (FTP) based training, clear bike-fit guidance, and practical tools that work on a normal phone.</p>
+
+      <h3 style="color:#f59e0b; margin-top:25px;">What you get</h3>
+      <ul>
+        <li>A complete Progressive Web App for indoor & outdoor training</li>
+        <li>Detailed cycling documents (Bike Fit, Phone Setup, User Manual)</li>
+        <li>Original music and promotional videos</li>
+        <li>Certificates as you progress through Foundation → Build → Race Prep</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- DOCUMENTS -->
+  <section id="tab-documents" class="tab-content">
+    <div class="section-title">
+      <h2>Cycling Documents</h2>
+      <button class="action-btn pdf-btn" onclick="generateDocumentsPDF()">📄 Download PDF</button>
+    </div>
+
+    <div class="card">
+      <div class="docs-header">
+        <img src="assets/docs.jpg" alt="Documents">
+        <div>
+          <h3 style="margin:0 0 6px 0; color:var(--gold);">Cycling Documents</h3>
+          <p style="margin:0; color:var(--muted); font-size:0.95rem;">
+            <strong>Note:</strong> This is a summary. The complete documents are available inside the Couch to 94.7 app.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>1. Bike Fit Optimization</h3>
+      <p><strong>Maximum Power. Minimum Pain.</strong></p>
+      <ul>
+        <li>Frame size & stand-over clearance</li>
+        <li>Saddle height (LeMond method)</li>
+        <li>Saddle fore/aft (KOPS rule)</li>
+        <li>Reach, drop and handlebar position</li>
+        <li>Cleat alignment</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>2. Phone Setup & Compatibility Guide</h3>
+      <ul>
+        <li>Use Google Chrome for best results</li>
+        <li>Android 6.0+ recommended for Bluetooth sensors</li>
+        <li>Add the app to your home screen</li>
+        <li>Enable Location + Bluetooth permissions</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>3. Final User Manual (Version 1.0)</h3>
+      <ul>
+        <li>12-week training structure</li>
+        <li>Understanding FTP, TSS and Intensity Factor</li>
+        <li>Sensor pairing and indoor setup</li>
+        <li>Race-day nutrition and equipment advice</li>
+      </ul>
+      <p style="margin-top:12px;">Contact: <strong>@NeilOliver1640</strong> on X</p>
+    </div>
+  </section>
+
+  <!-- APP HUB -->
+  <section id="tab-app" class="tab-content">
+    <h2 class="section-title">App Hub</h2>
+    <div class="card">
+      <img src="assets/94.7.jpg" alt="Couch to 94.7" class="app-banner">
+      <h3 style="color:var(--gold);">Couch to 94.7</h3>
+      <p style="color:var(--muted); margin-bottom:16px;">
+        The complete training companion — from couch to the Momentum 94.7 finish line. Progressive plan, FTP-based workouts, sensor support and certificates.
+      </p>
+      <a href="https://94-7.vercel.app/" target="_blank" class="action-btn">Launch App →</a>
+    </div>
+  </section>
+
+  <!-- MUSIC + VIDEO remain the same -->
+  <section id="tab-music" class="tab-content">
+    <h2 class="section-title">Music Showcase</h2>
+    <div class="media-wrapper">
+      <audio controls id="audioPlayer"><source src="assets/Track1.mp3" type="audio/mpeg"></audio>
+      <div class="track-list">
+        <button class="track-btn active" onclick="playTrack(0, this)">Cycling History</button>
+        <button class="track-btn" onclick="playTrack(1, this)">Own the Climb</button>
+        <button class="track-btn" onclick="playTrack(2, this)">Theme Song</button>
+        <button class="track-btn" onclick="playTrack(3, this)">Ride Song</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="tab-video" class="tab-content">
+    <h2 class="section-title">Video Promos</h2>
+    <div class="media-wrapper">
+      <video controls id="videoPlayer"><source src="assets/promo1.mp4" type="video/mp4"></video>
+      <div class="video-list">
+        <button class="video-btn active" onclick="playVideo(0, this)">Presentation 94.7</button>
+        <button class="video-btn" onclick="playVideo(1, this)">Promo Couch 1</button>
+        <button class="video-btn" onclick="playVideo(2, this)">Promo Couch 2</button>
+        <button class="video-btn" onclick="playVideo(3, this)">Promo Giro</button>
+        <button class="video-btn" onclick="playVideo(4, this)">Advert</button>
+       
+        
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>© Neil Oliver – Couch to 94.7. All rights reserved.</footer>
+
+<script>
+  function switchTab(tabId, btn) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + tabId).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  // ===== IMPROVED PDF FUNCTIONS =====
+  function generateProfilePDF() {
+    const element = document.getElementById('pdf-content');
+    element.style.display = 'block';
+
+    const opt = {
+      margin: 15,
+      filename: 'Neil_Oliver_Couch_to_94.7_Profile.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, backgroundColor: '#151b24' },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opt).from(element).save().then(() => {
+      element.style.display = 'none';
+    }).catch(err => {
+      console.error(err);
+      element.style.display = 'none';
+      alert('PDF generation failed. Please try again.');
+    });
+  }
+
+  function generateDocumentsPDF() {
+    // Simple alert for now - can expand later if needed
+    alert('Documents PDF coming soon. For now, the full documents are inside the app.');
+  }
+
+  // Music & Video
+  const tracks = ['assets/Track1.mp3','assets/Track2.mp3','assets/Track3.mp3','assets/Track4.mp3'];
+  function playTrack(i, btn) {
+    const p = document.getElementById('audioPlayer');
+    p.src = tracks[i];
+    p.play();
+    document.querySelectorAll('.track-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  const videos = ['assets/promo1.mp4','assets/promo2.mp4','assets/promo3.mp4','assets/promo4.mp4','assets/promo5.mp4'];
+  function playVideo(i, btn) {
+    const p = document.getElementById('videoPlayer');
+    p.src = videos[i];
+    p.play();
+    document.querySelectorAll('.video-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+</script>
+</body>
+</html>
